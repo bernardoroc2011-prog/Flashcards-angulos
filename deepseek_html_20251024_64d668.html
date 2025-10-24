@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards de Ângulos - Jogo Educativo</title>
+    <meta name="description" content="Jogo educativo de flashcards sobre ângulos para estudantes do 8º ano. Aprenda matemática de forma divertida!">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .level-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .level-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .level-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .level-btn.easy {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .level-btn.medium {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .level-btn.hard {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .level-btn.insane {
+            background-color: #8B0000;
+            color: white;
+        }
+        
+        .level-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8), 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .points-info {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .card-container {
+            perspective: 1000px;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+            border: 2px solid #e0e0e0;
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border: 2px solid #bdc3c7;
+            transform: rotateY(180deg);
+        }
+        
+        .question {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .answer {
+            font-size: 1.6rem;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .card-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-btn.show-answer {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .control-btn.next {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        .player {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .player.active {
+            transform: scale(1.03);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5), 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .player.winner {
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 0 3px gold, 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .player h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .player-1 h3 {
+            color: #e74c3c;
+        }
+        
+        .player-2 h3 {
+            color: #3498db;
+        }
+        
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #2c3e50;
+        }
+        
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .player-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .player-1 .player-btn.add-points {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .player-2 .player-btn.add-points {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .player-1 .player-btn.pass-turn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .player-2 .player-btn.pass-turn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .player-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .reset-btn {
+            padding: 12px 30px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .instructions {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .tips {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tips h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .tips-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        
+        .tip {
+            flex: 1;
+            min-width: 200px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .tip h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .tip p {
+            color: #7f8c8d;
+            line-height: 1.4;
+        }
+        
+        .share-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .share-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+        }
+        
+        .share-btn.whatsapp {
+            background-color: #25D366;
+            color: white;
+        }
+        
+        .share-btn.download {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .share-btn i {
+            font-size: 1.2rem;
+        }
+        
+        /* Tela de Vitória */
+        .victory-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .victory-container {
+            text-align: center;
+            z-index: 10;
+            max-width: 800px;
+            padding: 20px;
+        }
+        
+        .win-message {
+            font-size: 5rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: winAnimation 2s forwards;
+        }
+        
+        @keyframes winAnimation {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .thank-you {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+            animation-delay: 1.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .credits {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+            animation-delay: 2.5s;
+        }
+        
+        .victory-options {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+            animation-delay: 3.5s;
+        }
+        
+        .victory-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .continue-btn {
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            color: white;
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to right, #45a049, #7cb342);
+        }
+        
+        .exit-btn {
+            background: linear-gradient(to right, #f44336, #ff9800);
+            color: white;
+        }
+        
+        .exit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to right, #e53935, #fb8c00);
+        }
+        
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+        }
+        
+        /* Fireworks */
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+            opacity: 0;
+        }
+        
+        /* Trophy */
+        .trophy {
+            font-size: 8rem;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: trophyAnimation 2s forwards;
+            animation-delay: 0.5s;
+            text-shadow: 0 0 20px gold;
+        }
+        
+        @keyframes trophyAnimation {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2) rotate(180deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .level-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .level-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .score-board {
+                flex-direction: column;
+            }
+            
+            .question {
+                font-size: 1.4rem;
+            }
+            
+            .answer {
+                font-size: 1.3rem;
+            }
+            
+            .share-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .share-btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+            
+            .tips-content {
+                flex-direction: column;
+            }
+            
+            .victory-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .victory-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Flashcards de Ângulos</h1>
+            <p class="subtitle">Jogo Educativo</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="level-selector">
+                <button class="level-btn easy active" data-level="easy">Fácil (10 pontos)</button>
+                <button class="level-btn medium" data-level="medium">Médio (20 pontos)</button>
+                <button class="level-btn hard" data-level="hard">Difícil (30 pontos)</button>
+                <button class="level-btn insane" data-level="insane">Insano (50 pontos)</button>
+            </div>
+            
+            <div class="points-info" id="points-info">Acertos no nível FÁCIL valem 10 pontos</div>
+            
+            <div class="card-container">
+                <div class="card">
+                    <div class="card-face card-front">
+                        <div class="question" id="question">Clique em "Mostrar Resposta" para ver a pergunta</div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="answer" id="answer">Resposta aparecerá aqui</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-controls">
+                <button class="control-btn show-answer" id="show-answer">Mostrar Resposta</button>
+                <button class="control-btn next" id="next-card">Próxima Carta</button>
+            </div>
+            
+            <div class="score-board">
+                <div class="player player-1 active" id="player1">
+                    <h3>Jogador 1</h3>
+                    <div class="score" id="score1">0</div>
+                    <div class="player-controls">
+                        <button class="player-btn add-points">Adicionar Pontos</button>
+                        <button class="player-btn pass-turn">Passar a Vez</button>
+                    </div>
+                </div>
+                
+                <div class="player player-2" id="player2">
+                    <h3>Jogador 2</h3>
+                    <div class="score" id="score2">0</div>
+                    <div class="player-controls">
+                        <button class="player-btn add-points">Adicionar Pontos</button>
+                        <button class="player-btn pass-turn">Passar a Vez</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-controls">
+                <button class="reset-btn" id="reset-game">Reiniciar Jogo</button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>Como Jogar</h3>
+            <ul>
+                <li>Escolha um nível de dificuldade (Fácil, Médio, Difícil ou Insano)</li>
+                <li><strong>Fácil: 10 pontos | Médio: 20 pontos | Difícil: 30 pontos | Insano: 50 pontos</strong></li>
+                <li>Leia a pergunta no flashcard e tente responder</li>
+                <li>Clique em "Mostrar Resposta" para verificar se acertou</li>
+                <li>Se acertou, clique em "Adicionar Pontos" do jogador atual</li>
+                <li>Se errou, clique em "Passar a Vez" para alternar para o outro jogador</li>
+                <li>O jogador ativo é destacado com uma borda azul</li>
+                <li>O primeiro jogador a atingir 150 pontos vence!</li>
+                <li>Use "Próxima Carta" para avançar para a próxima pergunta</li>
+            </ul>
+        </div>
+        
+        <div class="tips">
+            <h3>Dicas - Conceitos de Ângulos</h3>
+            <div class="tips-content">
+                <div class="tip">
+                    <h4>Ângulo Complementar</h4>
+                    <p>Dois ângulos são complementares quando a soma de suas medidas é igual a 90º. Exemplo: 30º e 60º são complementares.</p>
+                </div>
+                <div class="tip">
+                    <h4>Ângulo Suplementar</h4>
+                    <p>Dois ângulos são suplementares quando a soma de suas medidas é igual a 180º. Exemplo: 120º e 60º são suplementares.</p>
+                </div>
+                <div class="tip">
+                    <h4>Classificação de Ângulos</h4>
+                    <p>Agudo: menor que 90º | Reto: exatamente 90º | Obtuso: maior que 90º e menor que 180º | Raso: exatamente 180º</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="share-section">
+            <button class="share-btn whatsapp" id="share-whatsapp">
+                <i class="fab fa-whatsapp"></i>
+                Compartilhar no WhatsApp
+            </button>
+            <button class="share-btn download" id="download-btn">
+                <i class="fas fa-download"></i>
+                Fazer Download
+            </button>
+        </div>
+    </div>
+
+    <!-- Tela de Vitória -->
+    <div class="victory-screen" id="victory-screen">
+        <div class="victory-container">
+            <div class="trophy">🏆</div>
+            <div class="win-message" id="win-message">VITÓRIA!</div>
+            <div class="thank-you">Obrigado por jogar!</div>
+            <div class="credits">
+                <strong>Créditos:</strong><br>
+                Bernardo R. C, Bernardo G. C,<br>
+                Miguel Moras, Rogerio Duraes
+            </div>
+            <div class="victory-options">
+                <button class="victory-btn continue-btn" id="continue-game">Continuar Jogando</button>
+                <button class="victory-btn exit-btn" id="exit-game">Sair do Jogo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos flashcards (revisados e organizados por nível)
+        const flashcards = {
+            easy: [
+                {q: "Qual é o complemento de um ângulo de 30º?", a: "60º"},
+                {q: "Se um ângulo mede 45º, qual é o seu suplemento?", a: "135º"},
+                {q: "Qual o tipo do ângulo que mede 90º?", a: "Ângulo reto"},
+                {q: "Qual é a soma dos ângulos em uma linha reta?", a: "180º"},
+                {q: "Que tipo de ângulo é um ângulo de 15º?", a: "Ângulo agudo"},
+                {q: "Qual o complemento de um ângulo de 75º?", a: "15º"},
+                {q: "O que é um ângulo obtuso?", a: "Ângulo maior que 90º e menor que 180º"},
+                {q: "Qual é a medida do ângulo reto?", a: "90º"},
+                {q: "Um ângulo agudo tem medida maior ou menor que 90º?", a: "Menor que 90º"},
+                {q: "Qual o nome do ângulo que mede exatamente 0º?", a: "Ângulo nulo"},
+                {q: "Dois ângulos complementares somam quantos graus?", a: "90º"},
+                {q: "Qual é o nome do ângulo que mede 180º?", a: "Ângulo raso"},
+                {q: "Qual é o nome do ângulo que mede entre 0º e 90º?", a: "Ângulo agudo"},
+                {q: "Qual é o nome do ângulo que mede entre 90º e 180º?", a: "Ângulo obtuso"},
+                {q: "O que são ângulos retos?", a: "Ângulos que medem exatamente 90º"},
+                {q: "Como se chama o ângulo formado por duas semirretas opostas?", a: "Ângulo raso"},
+                {q: "Qual é a soma dos ângulos complementares?", a: "90º"}
+            ],
+            medium: [
+                {q: "Dois ângulos são complementares; um mede 38º. Qual é o outro?", a: "52º"},
+                {q: "Dois ângulos são suplementares; um mede 140º. Qual o outro?", a: "40º"},
+                {q: "Um ângulo é agudo e seu suplemento mede 120º. Quanto mede esse ângulo?", a: "60º"},
+                {q: "A soma de dois ângulos é 90º. Um deles é 2 vezes maior que o outro. Quais são eles?", a: "30º e 60º"},
+                {q: "Classifique um ângulo de 0º.", a: "Ângulo nulo"},
+                {q: "Qual é o valor do ângulo complementar de um ângulo agudo de 70º?", a: "20º"},
+                {q: "Quais são os ângulos suplementares se um mede 75º?", a: "75º e 105º"},
+                {q: "Em um triângulo, dois ângulos são de 40º e 90º. Qual é a medida do terceiro e sua classificação?", a: "50º, agudo"},
+                {q: "Qual ângulo suplementar de um ângulo de 125º?", a: "55º"},
+                {q: "Qual é a soma dos ângulos de um triângulo?", a: "180º"},
+                {q: "Se dois ângulos são suplementares e um mede 115º, quanto mede o outro?", a: "65º"},
+                {q: "Em um triângulo, dois ângulos medem 50º e 60º. Qual a medida do terceiro?", a: "70º"},
+                {q: "Qual é a soma das medidas dos ângulos internos de qualquer triângulo?", a: "180º"},
+                {q: "Um ângulo é 5 vezes maior que seu complemento. Qual a medida dele?", a: "75º"},
+                {q: "Classifique um ângulo que mede 130º.", a: "Ângulo obtuso"},
+                {q: "Se dois ângulos são suplementares e um mede 140º, quanto mede o outro?", a: "40º"},
+                {q: "Qual é o complemento de um ângulo de 25º?", a: "65º"},
+                {q: "Um ângulo mede 3x e seu suplemento mede x + 60. Qual o valor de x?", a: "30º"},
+                {q: "Qual a medida de um ângulo que é igual ao seu suplemento?", a: "90º"}
+            ],
+            hard: [
+                {q: "Dois ângulos são complementares. Um é três vezes maior que o outro. Quais são?", a: "22,5º e 67,5º"},
+                {q: "O ângulo A é suplementar ao ângulo B, que é complementar ao ângulo C, que mede 40º. Qual é A?", a: "130º"},
+                {q: "Em um triângulo, um ângulo é reto e os outros dois iguais. Quais são as medidas dos dois iguais?", a: "45º e 45º"},
+                {q: "O ângulo obtuso mede 2x + 10º e seu suplemento x - 20º. Calcule x.", a: "30º"},
+                {q: "Quantos graus faltam para um ângulo de 75º ser reto?", a: "15º"},
+                {q: "Dois ângulos suplementares medem x + 20º e 3x - 40º, calcule x.", a: "20º"},
+                {q: "Um ângulo raso é dividido em dois, um é triplo do outro. Quais são?", a: "45º e 135º"},
+                {q: "Em um triângulo os ângulos são x, 2x e 3x. Quais são?", a: "30º, 60º e 90º"},
+                {q: "Qual é o ângulo completo em graus?", a: "360º"},
+                {q: "Se o triplo de um ângulo complementar é 135º, qual é o ângulo?", a: "45º"},
+                {q: "Dois ângulos são complementares. Um é o dobro do outro. Quais são as medidas?", a: "30º e 60º"},
+                {q: "Em um triângulo isósceles, os ângulos da base medem 40º cada. Qual é a medida do ângulo do vértice?", a: "100º"},
+                {q: "O suplemento de um ângulo é 40º maior que ele. Qual a medida do ângulo?", a: "70º"},
+                {q: "Um ângulo mede x graus e seu suplemento mede 3x - 40 graus. Qual o valor de x?", a: "30º"},
+                {q: "Calcule a medida dos ângulos internos de um triângulo cujos lados são proporcionais a 3, 4 e 5.", a: "37º, 53º e 90º"},
+                {q: "Um ângulo é 20º menor que o dobro do seu complemento. Qual é a medida do ângulo?", a: "70º"},
+                {q: "A diferença entre um ângulo e seu suplemento é 60º. Qual é a medida do menor ângulo?", a: "60º"},
+                {q: "Em um triângulo, um ângulo mede o triplo do outro, e o terceiro mede 20º a mais que o menor. Calcule os ângulos.", a: "30º, 90º e 60º"},
+                {q: "O complemento de um ângulo é igual à terça parte do seu suplemento. Qual é a medida do ângulo?", a: "67,5º"},
+                {q: "Num triângulo isósceles, o ângulo do vértice é o triplo do da base. Calcule as medidas dos ângulos.", a: "45º, 45º e 90º"}
+            ],
+            insane: [
+                {q: "O complemento de um ângulo é metade do seu suplemento.", a: "0º (ângulo nulo)"},
+                {q: "A diferença entre o suplemento e o dobro do complemento de um ângulo é 30º.", a: "30º"},
+                {q: "O suplemento de um ângulo é 10º menor que o triplo do seu complemento.", a: "40º"},
+                {q: "O complemento de um ângulo é igual à quarta parte do seu suplemento menos 5º.", a: "66,7º (aproximadamente)"},
+                {q: "A soma de um ângulo com o triplo do seu suplemento é igual ao quádruplo do seu complemento.", a: "90º"}
+            ]
+        };
+
+        // Pontuação por nível
+        const levelPoints = {
+            easy: 10,
+            medium: 20,
+            hard: 30,
+            insane: 50
+        };
+
+        // Variáveis do jogo
+        let currentLevel = 'easy';
+        let currentCards = [];
+        let currentIndex = 0;
+        let player1Score = 0;
+        let player2Score = 0;
+        let activePlayer = 1;
+        let gameOver = false;
+        let winnerName = "";
+
+        // Elementos DOM
+        const questionEl = document.getElementById('question');
+        const answerEl = document.getElementById('answer');
+        const cardEl = document.querySelector('.card');
+        const score1El = document.getElementById('score1');
+        const score2El = document.getElementById('score2');
+        const player1El = document.getElementById('player1');
+        const player2El = document.getElementById('player2');
+        const levelBtns = document.querySelectorAll('.level-btn');
+        const showAnswerBtn = document.getElementById('show-answer');
+        const nextCardBtn = document.getElementById('next-card');
+        const resetBtn = document.getElementById('reset-game');
+        const downloadBtn = document.getElementById('download-btn');
+        const shareWhatsappBtn = document.getElementById('share-whatsapp');
+        const pointsInfoEl = document.getElementById('points-info');
+        const addPointsBtns = document.querySelectorAll('.add-points');
+        const passTurnBtns = document.querySelectorAll('.pass-turn');
+        const victoryScreen = document.getElementById('victory-screen');
+        const winMessageEl = document.getElementById('win-message');
+        const continueGameBtn = document.getElementById('continue-game');
+        const exitGameBtn = document.getElementById('exit-game');
+
+        // Inicialização do jogo
+        function initGame() {
+            setLevel(currentLevel);
+            updateScores();
+            updateActivePlayer();
+            updatePointsInfo();
+            
+            // Event listeners para os botões de nível
+            levelBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    levelBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    setLevel(btn.dataset.level);
+                    updatePointsInfo();
+                });
+            });
+            
+            // Event listener para mostrar resposta
+            showAnswerBtn.addEventListener('click', showAnswer);
+            
+            // Event listener para próxima carta
+            nextCardBtn.addEventListener('click', nextCard);
+            
+            // Event listener para reiniciar jogo
+            resetBtn.addEventListener('click', resetGame);
+            
+            // Event listeners para botões de pontuação
+            addPointsBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (gameOver) return;
+                    addPoints(activePlayer, levelPoints[currentLevel]);
+                    switchPlayer();
+                });
+            });
+            
+            // Event listeners para botões de passar a vez
+            passTurnBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (gameOver) return;
+                    switchPlayer();
+                });
+            });
+            
+            // Event listener para download
+            downloadBtn.addEventListener('click', downloadHTML);
+            
+            // Event listener para compartilhar no WhatsApp
+            shareWhatsappBtn.addEventListener('click', shareOnWhatsApp);
+            
+            // Event listeners para tela de vitória
+            continueGameBtn.addEventListener('click', continueGame);
+            exitGameBtn.addEventListener('click', exitGame);
+        }
+
+        // Atualizar informação de pontos
+        function updatePointsInfo() {
+            const points = levelPoints[currentLevel];
+            const levelNames = {
+                easy: "FÁCIL",
+                medium: "MÉDIO", 
+                hard: "DIFÍCIL",
+                insane: "INSANO"
+            };
+            pointsInfoEl.textContent = `Acertos no nível ${levelNames[currentLevel]} valem ${points} pontos`;
+        }
+
+        // Definir nível de dificuldade
+        function setLevel(level) {
+            currentLevel = level;
+            currentCards = [...flashcards[level]];
+            shuffleArray(currentCards);
+            currentIndex = 0;
+            showCard();
+        }
+
+        // Embaralhar array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Mostrar carta atual
+        function showCard() {
+            const card = currentCards[currentIndex];
+            questionEl.textContent = card.q;
+            answerEl.textContent = card.a;
+            // CORREÇÃO DO BUG: Garantir que a carta volte para a frente
+            cardEl.classList.remove('flipped');
+        }
+
+        // Mostrar resposta (virar carta)
+        function showAnswer() {
+            cardEl.classList.add('flipped');
+        }
+
+        // Próxima carta
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % currentCards.length;
+            showCard();
+        }
+
+        // Adicionar pontos ao jogador
+        function addPoints(player, points) {
+            if (player === 1) {
+                player1Score += points;
+            } else {
+                player2Score += points;
+            }
+            updateScores();
+            checkWinner();
+        }
+
+        // Atualizar placar na tela
+        function updateScores() {
+            score1El.textContent = player1Score;
+            score2El.textContent = player2Score;
+        }
+
+        // Alternar jogador ativo
+        function switchPlayer() {
+            activePlayer = activePlayer === 1 ? 2 : 1;
+            updateActivePlayer();
+        }
+
+        // Atualizar jogador ativo na tela
+        function updateActivePlayer() {
+            if (activePlayer === 1) {
+                player1El.classList.add('active');
+                player2El.classList.remove('active');
+            } else {
+                player1El.classList.remove('active');
+                player2El.classList.add('active');
+            }
+        }
+
+        // Verificar se há um vencedor
+        function checkWinner() {
+            if (player1Score >= 150) {
+                gameOver = true;
+                winnerName = "Jogador 1";
+                showVictoryScreen();
+            } else if (player2Score >= 150) {
+                gameOver = true;
+                winnerName = "Jogador 2";
+                showVictoryScreen();
+            }
+        }
+
+        // Mostrar tela de vitória
+        function showVictoryScreen() {
+            winMessageEl.textContent = `${winnerName} VENCEU!`;
+            victoryScreen.style.display = 'flex';
+            createConfetti();
+            createFireworks();
+            
+            // Repetir confetes a cada 3 segundos
+            setInterval(createConfetti, 3000);
+        }
+
+        // Continuar jogo após vitória
+        function continueGame() {
+            victoryScreen.style.display = 'none';
+            resetGame();
+        }
+
+        // Sair do jogo
+        function exitGame() {
+            if (confirm("Tem certeza que deseja sair do jogo?")) {
+                alert("Obrigado por jogar!");
+                // Aqui você poderia redirecionar para outra página ou fechar a janela
+            }
+        }
+
+        // Reiniciar jogo
+        function resetGame() {
+            player1Score = 0;
+            player2Score = 0;
+            activePlayer = 1;
+            gameOver = false;
+            updateScores();
+            updateActivePlayer();
+            player1El.classList.remove('winner');
+            player2El.classList.remove('winner');
+            setLevel(currentLevel);
+        }
+
+        // Criar confetes
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff9900', '#ff66cc'];
+            
+            for (let i = 0; i < 200; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.opacity = '1';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                victoryScreen.appendChild(confetti);
+                
+                // Animação do confete
+                const animation = confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: 2000 + Math.random() * 3000,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                });
+                
+                // Remover confete após animação
+                animation.onfinish = () => {
+                    confetti.remove();
+                };
+            }
+        }
+
+        // Criar fogos de artifício
+        function createFireworks() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight / 2;
+                    
+                    for (let j = 0; j < 80; j++) {
+                        const firework = document.createElement('div');
+                        firework.className = 'firework';
+                        firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                        firework.style.left = x + 'px';
+                        firework.style.top = y + 'px';
+                        firework.style.opacity = '1';
+                        
+                        victoryScreen.appendChild(firework);
+                        
+                        const angle = Math.random() * Math.PI * 2;
+                        const distance = 50 + Math.random() * 150;
+                        
+                        const animation = firework.animate([
+                            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                            { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
+                        ], {
+                            duration: 1000 + Math.random() * 500,
+                            easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                        });
+                        
+                        animation.onfinish = () => {
+                            firework.remove();
+                        };
+                    }
+                }, i * 800);
+            }
+        }
+
+        // Compartilhar no WhatsApp
+        function shareOnWhatsApp() {
+            const gameUrl = window.location.href;
+            const text = "🎮 Confira este incrível jogo educativo de Flashcards de Ângulos! Aprenda matemática de forma divertida! " + gameUrl;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Download do HTML
+        function downloadHTML() {
+            // Criar um blob com o conteúdo HTML
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            
+            // Criar um link para download
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'flashcards-angulos.html';
+            document.body.appendChild(a);
+            a.click();
+            
+            // Limpar
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+
+        // Inicializar o jogo quando a página carregar
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
